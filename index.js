@@ -2,11 +2,16 @@ const Discord = require('discord.js');
 const Rest = require('@discordjs/rest');
 const Types = require('discord-api-types/v9');
 const Builder = require('@discordjs/builders');
+const Voice = require('@discordjs/voice');
+const GetMP3Duration = require('get-mp3-duration');
+const Fs = require('fs');
 
 const DISCORD_APP = '';
 const DISCORD_TOKEN = '';
+
 const CHRISTMAS_DAY = 24;
 const CHRISTMAS_TREE = 'https://toppng.com/uploads/preview/christmas-trees-11607028718sbqxewfke3.png';
+
 
 const christmasSlashCommand = {
     data: new Builder.SlashCommandBuilder()
@@ -36,10 +41,58 @@ const christmasSlashCommand = {
     }
 };
 
+const merryChristmasSlashCommand = {
+    data: new Builder.SlashCommandBuilder()
+        .setName('merrychristmas')
+        .setDescription('Merry Christmas player.'),
+    async execute(client, interaction) {
+        const channelId = interaction.member.voice.channelId;
+        if (channelId === null) {
+            await interaction.reply({
+                content: 'You are not currently in a voice channel.',
+                ephemeral: true
+            });
+            return;
+        }
 
-const client = new Discord.Client({ intents: [Discord.GatewayIntentBits.Guilds] });
+        const connection = Voice.joinVoiceChannel({
+            channelId: interaction.member.voice.channelId,
+            guildId: interaction.guildId,
+            adapterCreator: interaction.guild.voiceAdapterCreator
+        });
+
+        const resource = Voice.createAudioResource('merry_christmas.mp3', { inlineVolume: true });
+
+        const player = Voice.createAudioPlayer();
+        connection.subscribe(player);
+        player.play(resource)
+
+        const buffer = Fs.readFileSync('merry_christmas.mp3');
+        const duration = GetMP3Duration(buffer);
+
+        const guildId = interaction.guildId;
+
+        setTimeout(() => {
+            Voice.getVoiceConnection(guildId).disconnect();
+        }, duration + 2000);
+
+        await interaction.reply({
+            content: 'Joined voice channel to wish you Merry Christmas!:christmas_tree:',
+            ephemeral: true
+        });
+    }
+};
+
+
+const client = new Discord.Client({
+    intents: [
+        Discord.GatewayIntentBits.Guilds,
+        Discord.GatewayIntentBits.GuildVoiceStates
+    ]
+});
 client.commands = new Discord.Collection();
 client.commands.set('christmas', christmasSlashCommand);
+client.commands.set('merrychristmas', merryChristmasSlashCommand);
 
 client.once('ready', async client => {
     console.log('LOGGED IN AS: ' + client.user.tag);
@@ -54,8 +107,7 @@ client.once('ready', async client => {
 });
 
 client.on('interactionCreate', async interaction => {
-    if (interaction.type === Discord.InteractionType.ApplicationCommand &&
-        interaction.commandName === 'christmas') {
+    if (interaction.type === Discord.InteractionType.ApplicationCommand) {
         const command = interaction.client.commands.get(interaction.commandName);
 
         /* If the command doesn't exist, return */
@@ -70,36 +122,10 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
-
-
-async function christmasSlashCommandFunction(client, interaction) {
-    const timeLeft = calculateChristmas();
-
-    const file = new Discord.AttachmentBuilder('./christmas_tree.png');
-    const embed = new Discord.EmbedBuilder()
-        .setTitle('Christmas Countdown!')
-        .setColor('#ea4630')
-        .setThumbnail('attachment://christmas_tree.png')
-
-    if (timeLeft === null) {
-        embed.setDescription(`IT'S CHRISTMAS! :christmas_tree::christmas_tree::christmas_tree:`);
-    }
-    else {
-        embed.setDescription(`**${timeLeft}**`);
-    }
-
-    const content = {
-        embeds: [embed],
-        files: [file]
-    }
-
-    console.log(`${interaction.user.username} just called the christmas command.`)
-    await interaction.reply(content);
-}
-
 async function registerSlashCommands(guild) {
     const commands = [];
     commands.push(christmasSlashCommand.data.toJSON());
+    commands.push(merryChristmasSlashCommand.data.toJSON());
 
     const rest = new Rest.REST({ version: '9' }).setToken(DISCORD_TOKEN);
 
