@@ -17,5 +17,11 @@
         "@discordjs/opus": "^0.8.0",
         "libsodium-wrappers": "^0.7.10",
         "get-mp3-duration": "^1.0.0"
+    },
+    "pkg": {
+        "assets": [
+            "C:/snapshot/ChristmasBot/node_modules/ffmpeg-static/ffmpeg.exe",
+            "C:/snapshot/ChristmasBot/node_modules/@ffmpeg-installer/**"
+        ]
     }
 }
