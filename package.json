@@ -1,0 +1,16 @@
+{
+    "name": "christmasBot",
+    "version": "1.0.0",
+    "description": "Discord Bot that remind how many days till christmas.",
+    "main": "index.js",
+    "scripts": {
+        "run": "node ."
+    },
+    "author": "Alexemanuelol",
+    "dependencies": {
+        "@discordjs/rest": "^1.0.1",
+        "discord-api-types": "^0.37.1",
+        "discord.js": "^14.2.0",
+        "pkg": "^5.8.0"
+    }
+}

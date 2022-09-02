@@ -1,0 +1,9 @@
+{
+    "general": {
+        "christmasDay": 24
+    },
+    "discord": {
+        "clientId": "",
+        "token": ""
+    }
+}
