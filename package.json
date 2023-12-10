@@ -9,8 +9,11 @@
     "author": "Alexemanuelol",
     "dependencies": {
         "@discordjs/rest": "^1.0.1",
+        "@discordjs/voice": "^0.16.1",
         "discord-api-types": "^0.37.1",
         "discord.js": "^14.2.0",
+        "ffmpeg-static": "^5.2.0",
+        "libsodium-wrappers": "^0.7.13",
         "pkg": "^5.8.0"
     }
 }

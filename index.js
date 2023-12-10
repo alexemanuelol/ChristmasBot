@@ -5,7 +5,8 @@ const Config = require('./config.json');
 
 const client = new Discord.Client({
     intents: [
-        Discord.GatewayIntentBits.Guilds
+        Discord.GatewayIntentBits.Guilds,
+        Discord.GatewayIntentBits.GuildVoiceStates
     ]
 });
 
